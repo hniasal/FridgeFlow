@@ -1,12 +1,14 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
-const db = require("./config/db");
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import db from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
+import ingredientRoutes from "./routes/ingredientRoutes.js";
 
-// Import Routes
-const ingredientRoutes = require("./routes/ingredientRoutes");
+dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
@@ -27,9 +29,8 @@ app.get("/api/v1/health", async (req, res) => {
 });
 
 // Endpoint Master Bahan Makanan
+app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/ingredients", ingredientRoutes);
-
-const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server berjalan di http://localhost:${PORT}`);
 });

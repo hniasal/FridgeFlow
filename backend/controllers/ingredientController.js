@@ -1,21 +1,12 @@
-const db = require("../config/db");
-const Joi = require("joi");
-
-// Skema Validasi Joi untuk Bahan Makanan
-const ingredientSchema = Joi.object({
-  name: Joi.string().max(100).required(),
-  category: Joi.string().max(50).required(),
-  qty: Joi.number().min(0).default(0),
-  unit: Joi.string().max(20).required(),
-  min_qty: Joi.number().min(0).default(0),
-  expiry_date: Joi.date().allow(null, ""),
-});
+import db from "../config/db.js";
+import { ingredientSchema } from "../validations/ingredientValidation.js";
 
 // 1. Ambil Semua Bahan Makanan
 const getIngredients = async (req, res) => {
   try {
     const result = await db.query(
-      "SELECT * FROM ingredients ORDER BY created_at DESC",
+      "SELECT * FROM ingredients WHERE user_id = $1 ORDER BY created_at DESC",
+      [req.user.id],
     );
     res.status(200).json({
       status: "Success",
@@ -30,9 +21,10 @@ const getIngredients = async (req, res) => {
 const getIngredientById = async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await db.query("SELECT * FROM ingredients WHERE id = $1", [
-      id,
-    ]);
+    const result = await db.query(
+      "SELECT * FROM ingredients WHERE id = $1 AND user_id = $2",
+      [id, req.user.id],
+    );
     if (result.rows.length === 0) {
       return res
         .status(404)
@@ -61,11 +53,19 @@ const createIngredient = async (req, res) => {
 
   try {
     const queryText = `
-      INSERT INTO ingredients (name, category, qty, unit, min_qty, expiry_date)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO ingredients (user_id, name, category, qty, unit, min_qty, expiry_date)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *
     `;
-    const values = [name, category, qty, unit, min_qty, expiry_date || null];
+    const values = [
+      req.user.id,
+      name,
+      category,
+      qty,
+      unit,
+      min_qty,
+      expiry_date || null,
+    ];
     const result = await db.query(queryText, values);
 
     res.status(201).json({
@@ -96,7 +96,7 @@ const updateIngredient = async (req, res) => {
     const queryText = `
       UPDATE ingredients
       SET name = $1, category = $2, qty = $3, unit = $4, min_qty = $5, expiry_date = $6
-      WHERE id = $7
+      WHERE id = $7 AND user_id = $8
       RETURNING *
     `;
     const values = [
@@ -131,8 +131,8 @@ const deleteIngredient = async (req, res) => {
   const { id } = req.params;
   try {
     const result = await db.query(
-      "DELETE FROM ingredients WHERE id = $1 RETURNING *",
-      [id],
+      "DELETE FROM ingredients WHERE id = $1 AND user_id = $2 RETURNING *",
+      [id, req.user.id],
     );
     if (result.rows.length === 0) {
       return res
@@ -148,7 +148,7 @@ const deleteIngredient = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getIngredients,
   getIngredientById,
   createIngredient,
