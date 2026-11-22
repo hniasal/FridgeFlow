@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #f4f8fc;
+  color: #0f172a;
+  min-height: 100vh;
+}
+
+.sky-atmosphere {
+  background: linear-gradient(
+    180deg,
+    #c6e2ff 0%,
+    #e5f2ff 24%,
+    #f4f8fc 58%,
+    #f8fafc 100%
+  );
+}
+
+.blue-gradient-card {
+  background: linear-gradient(135deg, #1d7afc 0%, #0ea5e9 55%, #0284c7 100%);
+}
+
+.blue-gradient-btn {
+  background: linear-gradient(135deg, #1d7afc 0%, #0284c7 100%);
+}
+
+.blue-gradient-btn:hover {
+  background: linear-gradient(135deg, #1565d8 0%, #0369a1 100%);
+}
+
+.striped-bar {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #cbd5e1,
+    #cbd5e1 4px,
+    #f1f5f9 4px,
+    #f1f5f9 8px
+  );
+}
+
+.rich-notes ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin: 0.25rem 0;
+}
+.rich-notes ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin: 0.25rem 0;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
