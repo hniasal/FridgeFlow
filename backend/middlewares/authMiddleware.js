@@ -6,7 +6,7 @@ export const verifyToken = (req, res, next) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
       status: "Failed",
-      message: "Akses ditolak. Token tidak ditemukan.",
+      message: "Akses ditolak. Silakan masuk terlebih dahulu.",
     });
   }
 
@@ -19,7 +19,7 @@ export const verifyToken = (req, res, next) => {
   } catch (err) {
     return res.status(403).json({
       status: "Failed",
-      message: "Token tidak valid atau sudah kedaluwarsa.",
+      message: "Sesi telah berakhir. Silakan masuk kembali.",
     });
   }
 };
