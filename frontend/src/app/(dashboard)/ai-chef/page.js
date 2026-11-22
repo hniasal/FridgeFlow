@@ -46,7 +46,10 @@ export default function SmartChefPage() {
         title: generatedRecipe.title,
         instructions: generatedRecipe.instructions,
         ingredients: generatedRecipe.ingredients.map((item) => ({
-          ingredient_id: item.ingredient_id,
+          ingredient_id: item.ingredient_id || null,
+          custom_name: item.ingredient_id
+            ? null
+            : item.custom_name || item.ingredient_name,
           qty_needed: Number(item.qty_needed),
           unit: item.unit,
         })),
@@ -134,18 +137,37 @@ export default function SmartChefPage() {
 
           <div>
             <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2.5">
-              Komposisi Bahan dari Stok Anda
+              Komposisi Bahan
             </h3>
             <div className="flex flex-wrap gap-2">
-              {generatedRecipe.ingredients?.map((ing, idx) => (
-                <span
-                  key={idx}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-950 text-white text-xs font-semibold"
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />
-                  {ing.ingredient_name}: {formatQty(ing.qty_needed)} {ing.unit}
-                </span>
-              ))}
+              {generatedRecipe.ingredients?.map((ing, idx) => {
+                const isAvailable = ing.is_available !== false;
+                return (
+                  <span
+                    key={idx}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold ${
+                      isAvailable
+                        ? "bg-slate-950 text-white"
+                        : "bg-red-50 border border-red-200 text-red-800"
+                    }`}
+                  >
+                    {isAvailable ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                    ) : (
+                      <AlertCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                    )}
+                    <span>
+                      {ing.ingredient_name}: {formatQty(ing.qty_needed)}{" "}
+                      {ing.unit}
+                    </span>
+                    {!isAvailable && (
+                      <span className="ml-1 px-2 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-extrabold">
+                        Tidak Tersedia
+                      </span>
+                    )}
+                  </span>
+                );
+              })}
             </div>
           </div>
 

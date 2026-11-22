@@ -104,7 +104,7 @@ function IngredientsContent() {
       category: item.category || "Lainnya",
       qty: formatQty(item.qty),
       unit: item.unit,
-      min_qty: formatQty(item.min_qty),
+      min_qty: String(Math.round(Number(item.min_qty || 0))),
       expiry_date: item.expiry_date
         ? String(item.expiry_date).split("T")[0]
         : "",
@@ -120,7 +120,7 @@ function IngredientsContent() {
       const payload = {
         ...formData,
         qty: Number(formData.qty),
-        min_qty: Number(formData.min_qty),
+        min_qty: Math.round(Number(formData.min_qty || 0)),
         expiry_date: formData.expiry_date || null,
       };
       if (editingItem) {
@@ -515,12 +515,16 @@ function IngredientsContent() {
                   </label>
                   <input
                     type="number"
-                    step={discreteSelected ? "1" : "0.01"}
+                    step="1"
                     min="0"
+                    inputMode="numeric"
                     required
                     value={formData.min_qty}
                     onChange={(e) =>
-                      setFormData({ ...formData, min_qty: e.target.value })
+                      setFormData({
+                        ...formData,
+                        min_qty: e.target.value.replace(/\D/g, ""),
+                      })
                     }
                     className="w-full px-4 py-2.5 rounded-2xl border border-slate-300 text-sm text-slate-950 focus:outline-none focus:border-[#1D7AFC]"
                   />
